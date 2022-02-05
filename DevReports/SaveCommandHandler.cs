@@ -27,6 +27,9 @@ namespace DevReports
         private static void Save()
         {
             File.WriteAllText("Report.XML", ReportToString(_designer.ActiveDesignPanel.Report));
+            // Prevent the "Report has been changed" dialog from being shown.
+            _designer.ActiveDesignPanel.ReportState = ReportState.Saved;
+
             MessageBox.Show("Save");
         }
 

@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DevExpress.XtraReports.UI;
 using DevExpress.XtraReports.UserDesigner;
 
 namespace DevReports
 {
     public class NewReportCommandHandler : ICommandHandler
     {
-        private XRDesignMdiController _designer;
+        private static XRDesignMdiController _designer;
 
         public NewReportCommandHandler(XRDesignMdiController designer)
         {
-            this._designer = designer;
+            _designer = designer;
         }
 
 
@@ -26,14 +27,14 @@ namespace DevReports
 
         public bool CanHandleCommand(ReportCommand command, ref bool useNextHandler)
         {
-            
+
             useNextHandler = command is not (ReportCommand.NewReport or ReportCommand.NewReportWizard);
             return !useNextHandler;
         }
 
         private static void NewReport()
         {
-            MessageBox.Show("New Report");
+            _designer.OpenReport(new XtraReport());
         }
     }
 }

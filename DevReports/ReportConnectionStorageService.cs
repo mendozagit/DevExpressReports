@@ -12,7 +12,7 @@ namespace DevReports
     public class ReportConnectionStorageService : IConnectionStorageService
     {
         public bool CanSaveConnection => false;
-
+        public string FileName { get; set; } = "connections.xml";
         public bool Contains(string connectionName)
         {
             return true;
@@ -23,7 +23,7 @@ namespace DevReports
             var reportConnections = new List<SqlDataConnection>();
             //var file =  @"C:\Dympos\AppSecrets.Json";
 
-            var appSecrets = JsonDeserialize<List<AppSecret>>(Application.StartupPath + @"\AppSecrets.json");
+            var appSecrets = Program.JsonDeserialize<List<AppSecret>>(Application.StartupPath + @"\AppSecrets.json");
 
 
             foreach (var appSecret in appSecrets)
@@ -36,28 +36,21 @@ namespace DevReports
                     Password = appSecret.Password,
                     AuthorizationType = MsSqlAuthorizationType.SqlServer
                 };
-
-                reportConnections.Add(new SqlDataConnection(appSecret.AppSecretName, parameters));
+               
+                var sqlDataConnection = new SqlDataConnection(appSecret.AppSecretName, parameters);
+                SaveConnection(appSecret.AppSecretName, sqlDataConnection, true);
+                reportConnections.Add(sqlDataConnection);
             }
 
 
             return reportConnections;
         }
 
-        public static string JsonSerializer<T>(T t, string jsonPanth)
-        {
-            File.WriteAllText(jsonPanth, JsonConvert.SerializeObject(t));
-            return File.ReadAllText(jsonPanth);
-        }
-
-
-        public static T JsonDeserialize<T>(string jsonPanth)
-        {
-            return JsonConvert.DeserializeObject<T>(File.ReadAllText(jsonPanth));
-        }
+        
 
         public void SaveConnection(string connectionName, IDataConnection connection, bool saveCredentials)
         {
+            connection.StoreConnectionNameOnly = true;
         }
     }
 }
